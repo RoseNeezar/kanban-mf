@@ -1,0 +1,20 @@
+version: "3.5"
+services:
+  mongo:
+    image: "mongo:latest"
+    command: mongod
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+  auth_redis:
+    image: "redis:6.2-alpine"
+    command: --port 6369
+    ports:
+      - 6369:6369
+  task_redis:
+    image: "redis:6.2-alpine"
+    command: --port 6379
+    ports:
+      - 6379:6379
