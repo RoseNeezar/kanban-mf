@@ -6,7 +6,6 @@ import App from "./App";
 import CustomRouter from "./app/utils/CustomRouter";
 import GlobalStyles from "./styles/GlobalStyles";
 import "react-toastify/dist/ReactToastify.min.css";
-import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 export const useHistory = createBrowserHistory();

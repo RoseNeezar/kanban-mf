@@ -9,7 +9,7 @@ const useSocket = (boardId: string) => {
   const cache = useQueryClient();
 
   useEffect(() => {
-    const socket = io("http://localhost:3030", {
+    const socket = io("http://localhost:5010", {
       withCredentials: true,
       path: "/kanban/socket.io",
     });
@@ -17,7 +17,6 @@ const useSocket = (boardId: string) => {
     setSocket(socket);
 
     socket.emit("setup", boardId);
-
     socket.on("connected", () => {
       console.log("pog");
       setSocketLoaded();

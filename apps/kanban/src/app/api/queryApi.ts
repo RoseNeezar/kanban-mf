@@ -12,7 +12,7 @@ import {
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 
-axios.defaults.baseURL = "http://localhost:3030/api";
+axios.defaults.baseURL = "http://localhost:5000/api";
 
 axios.interceptors.request.use((config) => {
   // const token = store.commonStore.token;
