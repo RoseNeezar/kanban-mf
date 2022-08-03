@@ -1,0 +1,10 @@
+FROM node:14.17.0
+WORKDIR '/app'
+COPY package.json yarn.lock ./
+COPY packages/gateway-service/package.json /app/packages/gateway-service/package.json
+COPY packages/auth-service/package.json /app/packages/auth-service/package.json
+COPY lerna.json /app/lerna.json
+RUN yarn
+COPY . .
+
+CMD ["yarn","run","start:dev"]

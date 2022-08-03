@@ -1,0 +1,22 @@
+{
+  "name": "@kanban-server/root",
+  "private": true,
+  "scripts": {
+    "start:dev": "lerna run --scope @kanban-server/* --parallel start:dev",
+    "start:dev-kanban": "lerna run --scope @kanban-server/kanban-service --parallel start:dev",
+    "build": "lerna run --scope @kanban-server/* --parallel build",
+    "serve": "lerna run --scope @kanban-server/* --parallel serve",
+    "clean": "lerna run --scope @kanban-server/* --parallel clean",
+    "lint": "lerna run --scope @kanban-server/* lint",
+    "bootstrap": "lerna bootstrap --ignore-scripts",
+    "add:gateway": "lerna --scope @kanban-server/gateway-service add",
+    "add:task": "lerna --scope @kanban-server/kanban-service add",
+    "add:all": "lerna add"
+  },
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
