@@ -53,6 +53,7 @@ export interface ICreateBoard {
 export interface IList {
   taskIds: string[];
   _id: string;
+  id: string;
   board?: string;
   title: string;
 }
@@ -74,6 +75,7 @@ export interface IGetAllListFromBoard {
 
 export interface ITask {
   _id: string;
+  id: string;
   title: string;
   dueDate?: Date;
   descriptions: string;
