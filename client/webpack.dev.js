@@ -11,16 +11,13 @@ const devConfig = {
   devServer: {
     port: 3002,
     historyApiFallback: true,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
   },
   //to dev in host app for hot reload
   // this shit works but only has live reload
-  // output: {
-  //   publicPath: "http://localhost:3002/",
-  //   clean: true,
-  // },
+  output: {
+    publicPath: "http://localhost:3002/",
+    clean: true,
+  },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
   },

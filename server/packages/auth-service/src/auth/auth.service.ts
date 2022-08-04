@@ -26,6 +26,7 @@ export class AuthService {
   async register(authCredentialDto: IUser & { password: string }) {
     let result: AuthEventResponse;
     const { email, password, username } = authCredentialDto;
+    console.log('newUser--1', email);
 
     const emailUser = await this.userRepo.findOne({ email });
     const usernameUser = await this.userRepo.findOne({ username });
@@ -55,17 +56,22 @@ export class AuthService {
         email,
         password,
       };
+      console.log('newUser--90', user);
+
       const newUser = await this.userRepo.create(user);
 
       const cookie = this.getCookieWithJwtToken(newUser._id);
-
+      console.log('newUser--', newUser);
       newUser.password = undefined;
-      return (result = {
+
+      result = {
         data: newUser,
         extraData: cookie,
         status: HttpStatus.OK,
-      });
+      };
+      return result;
     } catch (error) {
+      console.log('ERRRoo--', error);
       throw new BadRequestException();
     }
   }
@@ -130,6 +136,13 @@ export class AuthService {
 
   public getCookieWithJwtToken(userId: number) {
     const payload: TokenPayload = { userId };
+    console.log(
+      'payload--',
+      payload,
+      process.env.JWT_SECRET,
+      process.env.JWT_EXPIRATION_TIME,
+    );
+
     const token = this.jwtService.sign(payload);
     return cookie.serialize('token', token, {
       httpOnly: true,
@@ -141,6 +154,7 @@ export class AuthService {
   }
 
   public verifyToken(token: any) {
+    console.log('Verify--', process.env.JWT_SECRET, token);
     const { userId }: any = jwt.verify(token, process.env.JWT_SECRET);
     if (!userId) {
       return false;

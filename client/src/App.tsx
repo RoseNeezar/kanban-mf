@@ -2,11 +2,12 @@ import AuthRoute from "@pages/Auth/AuthRoute";
 import Login from "@pages/Auth/Login.modal";
 import Register from "@pages/Auth/Register.modal";
 import Kanban from "@pages/Kanban/Kanban.page";
+import Landing from "@pages/Landing/Landing.page";
+import NotFound from "@pages/NotFound/NotFound";
 import { useAuthStore } from "@store/useAuth.store";
 import React, { useEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Home from "./app/pages/Home/Home.page";
-import useRouteHooks from "./app/shared-hooks/useRouteHooks";
 
 const App: React.FC<{
   routePrefix: string;
@@ -28,8 +29,10 @@ const App: React.FC<{
   return (
     <React.Suspense fallback={<h1>Loading...</h1>}>
       <Routes location={state?.backgroundLocation || location}>
+        <Route path="/landing" element={<Landing />} />
+
         <Route
-          path={`${routePrefix}/kanban`}
+          path={`/app/kanban`}
           element={
             <AuthRoute>
               <Home />
@@ -37,11 +40,9 @@ const App: React.FC<{
           }
         />
 
-        <Route path={`${routePrefix}/kanban/:boardId`} element={<Kanban />} />
-        <Route
-          path="/"
-          element={<Navigate replace to={`${routePrefix}/kanban/`} />}
-        />
+        <Route path={`app/kanban/:boardId`} element={<Kanban />} />
+        <Route path="/" element={<Navigate replace to={`app/kanban/`} />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {state?.backgroundLocation && (
         <Routes>
