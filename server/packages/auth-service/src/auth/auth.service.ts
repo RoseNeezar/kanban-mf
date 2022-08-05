@@ -26,7 +26,6 @@ export class AuthService {
   async register(authCredentialDto: IUser & { password: string }) {
     let result: AuthEventResponse;
     const { email, password, username } = authCredentialDto;
-    console.log('newUser--1', email);
 
     const emailUser = await this.userRepo.findOne({ email });
     const usernameUser = await this.userRepo.findOne({ username });
@@ -154,7 +153,6 @@ export class AuthService {
   }
 
   public verifyToken(token: any) {
-    console.log('Verify--', process.env.JWT_SECRET, token);
     const { userId }: any = jwt.verify(token, process.env.JWT_SECRET);
     if (!userId) {
       return false;
