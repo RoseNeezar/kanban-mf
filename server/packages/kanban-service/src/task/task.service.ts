@@ -50,7 +50,7 @@ export class TaskService {
 
   async getAlltask(taskDto: IGetAlltask) {
     const { listIds } = taskDto;
-
+    if (!listIds) return { task: [] };
     try {
       if (listIds && listIds[0].length > 0) {
         const taskPromise = listIds.map(

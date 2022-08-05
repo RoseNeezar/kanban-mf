@@ -105,9 +105,13 @@ const KanbanList: FC<IKanbanListComp> = ({ list, index, tasks }) => {
                 {...provided.droppableProps}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                {tasks.map((task: ITask, index: any) => (
-                  <KanbanTask key={task._id} task={task} index={index} />
-                ))}
+                {tasks &&
+                  tasks.map(
+                    (task: ITask, index: any) =>
+                      task?._id && (
+                        <KanbanTask key={task._id} task={task} index={index} />
+                      )
+                  )}
                 {provided.placeholder}
                 <KanbanCreateList dataId={list._id} action="task" />
               </TaskList>

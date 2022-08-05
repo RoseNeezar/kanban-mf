@@ -1,6 +1,8 @@
 import queryApi from "@api/queryApi";
 import { allTaskKey, currentBoardKey } from "@api/queryKey";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import produce from "immer";
+import { IAllTasks, IGetAllListFromBoard } from "@store/types/kanban.types";
 
 export const useGetBoardList = (boardId: string) => {
   const { data, isLoading } = useQuery(currentBoardKey, () =>
@@ -25,6 +27,24 @@ export const useGetBoardList = (boardId: string) => {
   };
 };
 
+export const useGetTasks = (listIds: string[] | unknown) => {
+  const { data: Tasks, isLoading: TaskLoading } = useQuery(
+    allTaskKey,
+    () =>
+      queryApi.taskService
+        .getAllTaskFromList(listIds as string[])
+        .then((re) => re),
+    {
+      enabled: !!listIds,
+    }
+  );
+
+  return {
+    allTask: Tasks,
+    isTasksLoading: TaskLoading,
+  };
+};
+
 export const useCreateList = () => {
   const cache = useQueryClient();
 
@@ -33,7 +53,17 @@ export const useCreateList = () => {
       queryApi.listService.createList(data.title, data.boardId),
     {
       onSuccess: (result) => {
-        cache.invalidateQueries(currentBoardKey);
+        cache.setQueryData(currentBoardKey, (data) => {
+          return produce(data, (newData: IGetAllListFromBoard) => {
+            newData.list.push({
+              _id: result.list._id,
+              id: result.list._id,
+              taskIds: result.list.taskIds,
+              title: result.list.title,
+            });
+            newData.board.kanbanListOrder.push(result.list._id as never);
+          });
+        });
       },
     }
   );
@@ -50,8 +80,28 @@ export const useCreateTask = () => {
       queryApi.taskService.createTask(data.listId, data.title),
     {
       onSuccess: (result) => {
-        cache.invalidateQueries(currentBoardKey);
-        cache.invalidateQueries(allTaskKey);
+        cache.setQueryData(currentBoardKey, (data) => {
+          return produce(data, (newData: IGetAllListFromBoard) => {
+            const found = newData.list.find((x) => x._id === result.list._id);
+            if (found) {
+              newData.list
+                .find((x) => x._id === result.list._id)
+                ?.taskIds.push(result.task._id);
+            }
+          });
+        });
+
+        cache.setQueryData(allTaskKey, (data) => {
+          return produce(data, (newData: IAllTasks) => {
+            newData.task.push({
+              _id: result.task._id,
+              id: result.task._id,
+              descriptions: "",
+              list: result.task.list,
+              title: result.task.title,
+            });
+          });
+        });
       },
     }
   );
