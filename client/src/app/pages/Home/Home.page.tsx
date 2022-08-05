@@ -26,7 +26,7 @@ const Home = () => {
   };
 
   return (
-    <div tw="bg-dark-main flex flex-col items-center  w-full overflow-hidden ">
+    <div tw="bg-dark-main flex flex-col items-center h-screen w-full overflow-hidden ">
       <div tw="flex flex-col items-center ">
         <p tw="text-2xl text-dark-txt">Create Board</p>
         <div tw="flex flex-row items-center">

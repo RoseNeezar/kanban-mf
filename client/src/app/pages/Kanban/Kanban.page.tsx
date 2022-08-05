@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { IList, ITask } from "@store/types/kanban.types";
 import { useSocketStore } from "@store/useSocket.store";
 import useSocket from "@store/websockets/websockets";
@@ -8,7 +7,7 @@ import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import KanbanCreateList from "./components/KanbanCreateBtn";
 import KanbanList from "./components/KanbanList";
-import { useGetBoardList } from "./hooks/useList";
+import { useGetBoardList, useGetTasks } from "./hooks/useList";
 import { sortKanban } from "./hooks/useSortKanban";
 
 const Kanban: FC = () => {
@@ -74,7 +73,6 @@ const Kanban: FC = () => {
                   const tasks = column?.taskIds.map((taskId) =>
                     allTask?.task.find((x) => x._id === taskId)
                   ) as ITask[];
-                  console.log("REDENDER--2", column);
 
                   return (
                     <KanbanList

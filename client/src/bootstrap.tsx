@@ -7,6 +7,7 @@ import CustomRouter from "./app/utils/CustomRouter";
 import GlobalStyles from "./styles/GlobalStyles";
 import "react-toastify/dist/ReactToastify.min.css";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 export const useHistory = createBrowserHistory();
 
@@ -33,6 +34,7 @@ const useMount = (
         <CustomRouter history={useHistory}>
           <App routePrefix={routePrefix} useRemoteStore={useRemoteStore} />
         </CustomRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </React.StrictMode>,
     el

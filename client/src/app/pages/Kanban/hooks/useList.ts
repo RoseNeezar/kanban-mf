@@ -28,6 +28,24 @@ export const useGetBoardList = (boardId: string) => {
   };
 };
 
+export const useGetTasks = (listIds: string[] | unknown) => {
+  const { data: Tasks, isLoading: TaskLoading } = useQuery(
+    allTaskKey,
+    () =>
+      queryApi.taskService
+        .getAllTaskFromList(listIds as string[])
+        .then((re) => re),
+    {
+      enabled: !!listIds,
+    }
+  );
+
+  return {
+    allTask: Tasks,
+    isTasksLoading: TaskLoading,
+  };
+};
+
 export const useCreateList = () => {
   const cache = useQueryClient();
 
@@ -36,7 +54,17 @@ export const useCreateList = () => {
       queryApi.listService.createList(data.title, data.boardId),
     {
       onSuccess: (result) => {
-        cache.invalidateQueries(currentBoardKey);
+        cache.setQueryData(currentBoardKey, (data) => {
+          return produce(data, (newData: IGetAllListFromBoard) => {
+            newData.list.push({
+              _id: result.list._id,
+              id: result.list._id,
+              taskIds: result.list.taskIds,
+              title: result.list.title,
+            });
+            newData.board.kanbanListOrder.push(result.list._id as never);
+          });
+        });
       },
     }
   );
@@ -53,18 +81,14 @@ export const useCreateTask = () => {
       queryApi.taskService.createTask(data.listId, data.title),
     {
       onSuccess: (result) => {
-        const boat = cache.getQueriesData(currentBoardKey);
-        const t = cache.getQueriesData(allTaskKey);
-        console.log("ha--", boat, t, result);
-
         cache.setQueryData(currentBoardKey, (data) => {
           return produce(data, (newData: IGetAllListFromBoard) => {
-            newData.list.push({
-              _id: result.list._id,
-              id: result.list._id,
-              taskIds: result.list.taskIds,
-              title: result.list.title,
-            });
+            const found = newData.list.find((x) => x._id === result.list._id);
+            if (found) {
+              newData.list
+                .find((x) => x._id === result.list._id)
+                ?.taskIds.push(result.task._id);
+            }
           });
         });
 
@@ -79,12 +103,6 @@ export const useCreateTask = () => {
             });
           });
         });
-
-        const boats = cache.getQueriesData(currentBoardKey);
-        const ts = cache.getQueriesData(allTaskKey);
-        console.log("ha--1", boats, ts, result);
-        cache.invalidateQueries(currentBoardKey);
-        cache.invalidateQueries(allTaskKey);
       },
     }
   );
