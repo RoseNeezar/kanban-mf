@@ -59,15 +59,12 @@ export class KanbanGateway
   @UseGuards(WsAuthGuard)
   @SubscribeMessage('update-list-order')
   handleInBoard(client: Socket, data: any) {
-    console.log('update here-- ok--1s');
     return this.boardService.updateListOrder(data);
   }
 
   @UseGuards(WsAuthGuard)
   @SubscribeMessage('reorder-card-samelist')
   handleUpdateTaskSameList(client: Socket, data: IUpdatetaskameList) {
-    console.log('update card-- ok--1s', data);
-
     return this.taskService.updatetaskameList(data);
   }
 
@@ -77,8 +74,6 @@ export class KanbanGateway
     client: Socket,
     data: IUpdatetaskDifferentList,
   ) {
-    console.log('update here-- differentlist--1s');
-
     return this.taskService.updatetaskDifferentList(data);
   }
 

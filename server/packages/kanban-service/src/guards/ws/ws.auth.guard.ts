@@ -32,7 +32,7 @@ export class WsAuthGuard implements CanActivate {
     );
 
     if (!token) {
-      throw new BadRequestException('no token');
+      return false;
     }
 
     const userTokenInfo = await firstValueFrom(
@@ -40,7 +40,7 @@ export class WsAuthGuard implements CanActivate {
     );
 
     if (!userTokenInfo) {
-      throw new BadRequestException('token expired');
+      return false;
     }
 
     return true;

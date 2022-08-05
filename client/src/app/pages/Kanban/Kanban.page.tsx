@@ -47,12 +47,12 @@ const Kanban: FC = () => {
   };
 
   return (
-    <div tw="flex flex-row  overflow-scroll bg-dark-main relative h-screen">
+    <div tw="flex flex-col bg-dark-main relative h-screen">
       {/* {!isLoading ? ( */}
-      <div tw="">
-        <div tw="absolute top-0 z-10 text-dark-txt text-3xl font-bold left-0 right-0 mx-auto text-center ">
-          <h1>{currentBoard?.board.title}</h1>
-        </div>
+      <div tw=" text-dark-txt text-3xl font-bold mx-auto text-center ">
+        <h1>{currentBoard?.board.title}</h1>
+      </div>
+      <div tw="overflow-x-scroll h-screen ">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable
             droppableId="all-columns"
@@ -61,7 +61,7 @@ const Kanban: FC = () => {
           >
             {(provided) => (
               <div
-                tw="grid justify-start  grid-flow-col gap-2 py-10 overflow-auto grid-rows-min mt-10"
+                tw="grid justify-start  grid-flow-col gap-2 py-10 grid-rows-min"
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
