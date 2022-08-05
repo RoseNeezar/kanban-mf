@@ -73,7 +73,6 @@ const Kanban: FC = () => {
                   const tasks = column?.taskIds.map((taskId) =>
                     allTask?.task.find((x) => x._id === taskId)
                   ) as ITask[];
-                  console.log("REDENDER--2", currentBoard.list, allTask?.task);
 
                   return (
                     <KanbanList
