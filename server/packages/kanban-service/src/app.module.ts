@@ -11,7 +11,7 @@ import { taskModule } from './task/task.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypegooseModule.forRoot(`mongodb://root:example@0.0.0.0:27017`, {
+    TypegooseModule.forRoot(`mongodb://root:example@mongo:27017`, {
       useNewUrlParser: true,
       useCreateIndex: true,
       useFindAndModify: false,

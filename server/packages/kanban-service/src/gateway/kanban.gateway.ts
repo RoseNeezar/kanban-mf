@@ -24,7 +24,7 @@ import { KanbanService } from './kanban.service';
   path: '/kanban/socket.io',
   cors: {
     credentials: true,
-    origin: 'http://localhost:3002',
+    origin: process.env.ORIGIN,
   },
   transports: ['polling', 'websocket'],
 })
