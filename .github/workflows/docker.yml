@@ -34,10 +34,10 @@ jobs:
           docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
       - name: docker build server-gateway
         run: |
-          docker build -t rneezar2/kanban-mf-app-server-gateway ./server Dockerfile.gateway .
+          docker build -t rneezar2/kanban-mf-app-server-gateway ./server -f Dockerfile.gateway .
       - name: docker build server-kanban
         run: |
-          docker build -t rneezar2/kanban-mf-app-server-kanban ./server Dockerfile.socket .
+          docker build -t rneezar2/kanban-mf-app-server-kanban ./server -f Dockerfile.socket .
       - name: docker push
         run: |
           docker push rneezar2/kanban-mf-app-server-gateway
