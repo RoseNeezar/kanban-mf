@@ -1,5 +1,5 @@
 FROM node:16-alpine
-WORKDIR '/app'
+WORKDIR '/app/gateway'
 COPY package.json yarn.lock ./
 COPY packages/gateway-service/package.json /app/packages/gateway-service/package.json
 COPY packages/auth-service/package.json /app/packages/auth-service/package.json
