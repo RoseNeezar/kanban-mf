@@ -6,7 +6,7 @@ export class ConfigService {
   constructor() {
     this.envConfig = {
       url: process.env.TASK_MICROSERVICE_URL,
-      host: '0.0.0.0',
+      host: process.env.TASK_MICROSERVICE_HOST,
     };
     this.envConfig.authService = {
       options: {

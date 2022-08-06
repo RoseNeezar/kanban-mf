@@ -55,12 +55,10 @@ export class AuthService {
         email,
         password,
       };
-      console.log('newUser--90', user);
 
       const newUser = await this.userRepo.create(user);
 
       const cookie = this.getCookieWithJwtToken(newUser._id);
-      console.log('newUser--', newUser);
       newUser.password = undefined;
 
       result = {
@@ -135,12 +133,6 @@ export class AuthService {
 
   public getCookieWithJwtToken(userId: number) {
     const payload: TokenPayload = { userId };
-    console.log(
-      'payload--',
-      payload,
-      process.env.JWT_SECRET,
-      process.env.JWT_EXPIRATION_TIME,
-    );
 
     const token = this.jwtService.sign(payload);
     return cookie.serialize('token', token, {

@@ -1,3 +1,4 @@
+require("dotenv").config({ path: "./.env" });
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -71,6 +72,9 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.DefinePlugin({
+      "process.env.API_URL": JSON.stringify(process.env.API_URL),
+    }),
     new webpack.ProvidePlugin({
       React: "react",
     }),
