@@ -21,7 +21,7 @@ async function bootstrap() {
   // app.useWebSocketAdapter(new SocketIoAdapter(app, corsOrigins));
 
   await app.startAllMicroservices();
-  await app.listen(process.env.KANBAN_PORT);
+  await app.listen(4011);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
