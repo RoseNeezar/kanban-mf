@@ -41,14 +41,6 @@ jobs:
           tags: rneezar2/kanban-mf-app-server-gateway
           file: ./server/Dockerfile.gateway
 
-      - name: docker build nginx-gateway
-        uses: docker/build-push-action@v2
-        with:
-          context: ./nginx-server
-          push: true
-          tags: rneezar2/kanban-mf-app-nginx-gateway
-          file: ./nginx-server/Dockerfile.gateway
-
       - name: docker build server-kanban
         uses: docker/build-push-action@v2
         with:
@@ -57,10 +49,9 @@ jobs:
           tags: rneezar2/kanban-mf-app-server-kanban
           file: ./server/Dockerfile.socket
 
-      - name: docker build nginx-kanban
-        uses: docker/build-push-action@v2
-        with:
-          context: ./nginx-server
-          push: true
-          tags: rneezar2/kanban-mf-app-nginx-kanban
-          file: ./nginx-server/Dockerfile.kanban
+      - name: docker build nginx
+        run: |
+          docker build -t rneezar2/kanban-mf-app-nginx ./nginx-server
+      - name: docker push
+        run: |
+          docker push rneezar2/kanban-mf-app-nginx
