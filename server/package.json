@@ -4,7 +4,10 @@
   "scripts": {
     "start:dev": "lerna run --scope @kanban-server/* --parallel start:dev",
     "start:dev-kanban": "lerna run --scope @kanban-server/kanban-service --parallel start:dev",
-    "build": "lerna run --scope @kanban-server/* --parallel build",
+    "build:gateway": "lerna run --scope @kanban-server/* --ignore @kanban-server/kanban-service --parallel build",
+    "build:kanban": "lerna run --scope @kanban-server/kanban-service --parallel build",
+    "start:prod:gateway": "lerna run --scope @kanban-server/* --ignore @kanban-server/kanban-service --parallel start",
+    "start:prod:kanban": "lerna run --scope @kanban-server/kanban-service --parallel start",
     "serve": "lerna run --scope @kanban-server/* --parallel serve",
     "clean": "lerna run --scope @kanban-server/* --parallel clean",
     "lint": "lerna run --scope @kanban-server/* lint",

@@ -5,5 +5,6 @@ COPY packages/kanban-service/package.json /app/packages/kanban-service/package.j
 COPY lerna.json /app/lerna.json
 RUN yarn
 COPY . .
+RUN yarn build:kanban
 
-CMD ["yarn","run","start:dev-kanban"]
+CMD ["yarn","run","start:prod:kanban"]
