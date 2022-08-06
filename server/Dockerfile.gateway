@@ -1,9 +1,9 @@
 FROM node:16-alpine
 WORKDIR '/app/gateway'
 COPY package.json yarn.lock ./
-COPY packages/gateway-service/package.json /app/packages/gateway-service/package.json
-COPY packages/auth-service/package.json /app/packages/auth-service/package.json
-COPY lerna.json /app/lerna.json
+COPY packages/gateway-service/package.json /app/gateway/packages/gateway-service/package.json
+COPY packages/auth-service/package.json /app/gateway/packages/auth-service/package.json
+COPY lerna.json /app/gateway/lerna.json
 RUN yarn
 COPY . .
 RUN yarn build:gateway
