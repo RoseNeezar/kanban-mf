@@ -4,7 +4,7 @@ export class ConfigService {
   constructor() {
     this.envConfig = {
       url: process.env.AUTH_MICROSERVICE_URL,
-      host: '0.0.0.0',
+      host: process.env.AUTH_MICROSERVICE_HOST,
     };
   }
 

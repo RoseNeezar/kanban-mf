@@ -23,6 +23,7 @@
     "axios": "^0.24.0",
     "compression": "^1.7.4",
     "dayjs": "^1.10.6",
+    "dotenv": "^16.0.1",
     "dts-loader": "^0.1.6",
     "express": "^4.17.2",
     "history": "^5.0.0",
