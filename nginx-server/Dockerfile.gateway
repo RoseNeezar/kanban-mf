@@ -1,2 +1,0 @@
-FROM nginx
-COPY ./default.gateway.conf /etc/nginx/conf.d/default.gateway.conf
