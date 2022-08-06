@@ -13,7 +13,7 @@ import {
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 
-axios.defaults.baseURL = process.env.API_URL;
+axios.defaults.baseURL = process.env.API_URL + "/api";
 
 axios.interceptors.request.use((config) => {
   // const token = store.commonStore.token;
