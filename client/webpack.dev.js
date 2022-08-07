@@ -21,6 +21,18 @@ const devConfig = {
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
+  module: {
+    rules: [
+      {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+        options: {
+          plugins: [require.resolve("react-refresh/babel")],
+        },
+      },
+    ],
+  },
   // optimization: {
   //   runtimeChunk: "single",
   // },
