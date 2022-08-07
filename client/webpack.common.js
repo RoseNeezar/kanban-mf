@@ -10,12 +10,6 @@ module.exports = {
     errorDetails: true,
   },
   resolve: {
-    // symlinks: false,
-    // fallback: {
-    //   fs: false,
-    //   os: false,
-    //   module: false,
-    // },
     alias: {
       "@components": path.resolve(srcPath, "components"),
       "@shared-hooks": path.resolve(srcPath, "shared-hooks"),
@@ -37,10 +31,14 @@ module.exports = {
         test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         loader: "babel-loader",
-        options: {
-          plugins: [require.resolve("react-refresh/babel")],
-        },
+        // options: {
+        //   plugins: [require.resolve("react-refresh/babel")],
+        // },
       },
+      // {
+      //   test: /\.tsx?$/,
+      //   loader: "ts-loader",
+      // },
       {
         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
         loader: "url-loader",
