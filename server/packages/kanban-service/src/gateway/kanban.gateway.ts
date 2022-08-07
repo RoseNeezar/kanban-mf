@@ -20,7 +20,7 @@ import { ListService } from 'src/list/list.service';
 import { TaskService } from 'src/task/task.service';
 import { KanbanService } from './kanban.service';
 
-const whitelist = [process.env.ORIGIN, 'http://localhost:3000'];
+const whitelist = [process.env.ORIGIN];
 
 @WebSocketGateway({
   path: '/kanban/socket.io',
