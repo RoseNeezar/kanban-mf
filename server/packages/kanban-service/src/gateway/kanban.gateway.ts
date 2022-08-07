@@ -24,14 +24,18 @@ const whitelist = [process.env.ORIGIN, 'http://localhost:3000'];
 
 @WebSocketGateway({
   path: '/kanban/socket.io',
-  cors: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      console.log('allowed cors for:', origin);
-      callback(null, true);
-    } else {
-      console.log('blocked cors for:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
+  cors: {
+    credentials: true,
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin) !== -1) {
+        console.log('allowed cors for:', origin);
+        callback(null, true);
+      } else {
+        console.log('blocked cors for:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', '*'],
   },
   transports: ['polling', 'websocket'],
 })
