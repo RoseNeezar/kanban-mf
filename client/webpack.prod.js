@@ -12,6 +12,15 @@ const prodConfig = {
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
   },
+  module: {
+    rules: [
+      {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+      },
+    ],
+  },
   plugins: [
     new ModuleFederationPlugin({
       name: "kanban",

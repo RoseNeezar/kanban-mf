@@ -9,17 +9,29 @@ const devConfig = {
   entry: "./src/index.ts",
   mode: "development",
   devServer: {
-    port: 3002,
+    port: 3000,
     historyApiFallback: true,
   },
   //to dev in host app for hot reload
   // this shit works but only has live reload
   output: {
-    publicPath: "http://localhost:3002/",
+    publicPath: "http://localhost:3000/",
     clean: true,
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+        options: {
+          plugins: [require.resolve("react-refresh/babel")],
+        },
+      },
+    ],
   },
   // optimization: {
   //   runtimeChunk: "single",
