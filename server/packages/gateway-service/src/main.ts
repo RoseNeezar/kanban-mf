@@ -6,8 +6,7 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
-  console.log('EJS----', process.env.ORIGIN);
-  const whitelist = [process.env.ORIGIN, 'http://localhost:3000'];
+  const whitelist = [process.env.ORIGIN];
 
   app.enableCors({
     credentials: true,
