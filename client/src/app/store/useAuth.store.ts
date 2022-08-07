@@ -40,7 +40,7 @@ export const useAuthStore = create(
             s.user = result;
           });
         } catch (error) {
-          console.log("Err");
+          console.log("Err", error);
           useHistory.push("/landing");
         }
       },

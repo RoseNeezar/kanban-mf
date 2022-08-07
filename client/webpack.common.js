@@ -28,18 +28,6 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.[jt]sx?$/,
-        exclude: /node_modules/,
-        loader: "babel-loader",
-        // options: {
-        //   plugins: [require.resolve("react-refresh/babel")],
-        // },
-      },
-      // {
-      //   test: /\.tsx?$/,
-      //   loader: "ts-loader",
-      // },
-      {
         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
         loader: "url-loader",
         options: {
