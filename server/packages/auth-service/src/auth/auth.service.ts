@@ -138,7 +138,7 @@ export class AuthService {
     return cookie.serialize('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      sameSite: 'lax',
       maxAge: +process.env.JWT_EXPIRATION_TIME,
       path: '/',
     });

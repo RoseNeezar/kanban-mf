@@ -9,7 +9,7 @@ const useSocket = (boardId: string) => {
   const cache = useQueryClient();
 
   useEffect(() => {
-    const socket = io(String(process.env.API_URL), {
+    const socket = io(String(process.env.API_URL_WS), {
       withCredentials: true,
       path: "/kanban/socket.io",
     });

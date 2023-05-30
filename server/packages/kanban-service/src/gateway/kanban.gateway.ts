@@ -20,13 +20,15 @@ import { ListService } from 'src/list/list.service';
 import { TaskService } from 'src/task/task.service';
 import { KanbanService } from './kanban.service';
 
-const whitelist = [process.env.ORIGIN];
-
 @WebSocketGateway({
   path: '/kanban/socket.io',
   cors: {
     credentials: true,
     origin: function (origin, callback) {
+      const whitelist = [process.env.ORIGIN];
+
+      console.log('cors for:', origin, whitelist);
+
       if (whitelist.indexOf(origin) !== -1) {
         console.log('allowed cors for:', origin);
         callback(null, true);
