@@ -60,6 +60,7 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       "process.env.API_URL": JSON.stringify(process.env.API_URL),
+      "process.env.API_URL_WS": JSON.stringify(process.env.API_URL_WS),
     }),
     new webpack.ProvidePlugin({
       React: "react",
