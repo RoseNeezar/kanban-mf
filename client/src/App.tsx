@@ -8,6 +8,8 @@ import { useAuthStore } from "@store/useAuth.store";
 import React, { useEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Home from "./app/pages/Home/Home.page";
+import KanbanView from "./app/kanban/Kanban.view";
+import { tasks, columns } from "./app/kanban/mock";
 
 const App: React.FC<{
   routePrefix: string;
@@ -41,6 +43,14 @@ const App: React.FC<{
         />
 
         <Route path={`app/kanban/:boardId`} element={<Kanban />} />
+        <Route
+          path={`app/kanban2`}
+          element={
+            <div tw="flex w-full flex-1 bg-red-400">
+              <KanbanView Tasks={tasks} List={columns} />
+            </div>
+          }
+        />
         <Route path="/" element={<Navigate replace to={`app/kanban/`} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
