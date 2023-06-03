@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { tasks, columns } from "./mock";
 import {
   closestCenter,
   pointerWithin,
@@ -34,13 +33,9 @@ import { useParams } from "react-router-dom";
 import { useGetBoardList } from "../pages/Kanban/hooks/useList";
 import { useSocketStore } from "../store/useSocket.store";
 import useSocket from "../store/websockets/websockets";
+import { IAllTasks } from "../store/types/kanban.types";
 
-type Props = {
-  Tasks: typeof tasks;
-  List: typeof columns;
-};
-
-const Kanban = ({ List: columns, Tasks: ts }: Props) => {
+const Kanban = () => {
   const { boardId } = useParams<{ boardId: string }>();
   useSocket(boardId as string);
   const { currentBoard, allTask, isLoading } = useGetBoardList(
@@ -50,7 +45,7 @@ const Kanban = ({ List: columns, Tasks: ts }: Props) => {
 
   const cache = useQueryClient();
 
-  const [tasks, setTasks] = useState(ts);
+  const [tasks, setTasks] = useState<IAllTasks>();
   const [list, setList] = useState<Record<UniqueIdentifier, string[]>>({});
   const [listOrder, setListOrder] = useState<UniqueIdentifier[]>([]);
 
@@ -61,28 +56,42 @@ const Kanban = ({ List: columns, Tasks: ts }: Props) => {
   console.log("==currentBoard", { currentBoard, allTask, listOrder });
 
   useEffect(() => {
-    if (tasks) {
-      setTasks(tasks);
+    if (allTask) {
+      setTasks(allTask);
       let cols = {} as Record<string, string[]>;
-      // columns.sort((a, b) => a.order - b.order);
-      columns.forEach((c) => {
-        cols["column-" + c.id] = [];
+      let cols1 = {} as Record<string, string[]>;
+      currentBoard?.board.kanbanListOrder.forEach((x) => {
+        cols1["column-" + x] = [];
       });
-      tasks.forEach((d) => {
-        if (!("column-" + d.col_id in cols)) {
-          cols["column-" + d.col_id] = [];
+
+      allTask?.task.forEach((x) => {
+        if (!("column-" + x.list in cols1)) {
+          cols1["column-" + x.list] = [];
         }
-        cols["column-" + d.col_id]?.push("task-" + d.id);
+        cols1["column-" + x.list]?.push("task-" + x.id);
       });
-      setList(cols);
-      setListOrder(Object.keys(cols));
+
+      // columns.sort((a, b) => a.order - b.order);
+      // columns.forEach((c) => {
+      //   cols["column-" + c.id] = [];
+      // });
+      // tasks.forEach((d) => {
+      //   if (!("column-" + d.col_id in cols)) {
+      //     cols["column-" + d.col_id] = [];
+      //   }
+      //   cols["column-" + d.col_id]?.push("task-" + d.id);
+      // });
+      setList(cols1);
+      setListOrder(Object.keys(cols1));
       console.log("====", {
         tasks,
         cols,
+        cols1,
         listOrder: Object.keys(cols),
+        listOrder1: Object.keys(cols1),
       });
     }
-  }, [tasks, columns]);
+  }, [allTask, currentBoard]);
 
   const moveBetweenContainers = useCallback(
     (
@@ -314,21 +323,23 @@ const Kanban = ({ List: columns, Tasks: ts }: Props) => {
             items={listOrder}
             strategy={horizontalListSortingStrategy}
           >
-            {listOrder.map((containerId) => {
-              return (
-                <List
-                  id={containerId}
-                  key={containerId}
-                  items={list[containerId]!}
-                  name={
-                    columns.filter((c) => "column-" + c.id === containerId)[0]!
-                      .name
-                  }
-                  data={tasks}
-                  isSortingContainer={isSortingContainer}
-                />
-              );
-            })}
+            {tasks &&
+              listOrder.map((containerId) => {
+                return (
+                  <List
+                    id={containerId}
+                    key={containerId}
+                    items={list[containerId]!}
+                    name={
+                      currentBoard?.list.filter(
+                        (c) => "column-" + c.id === containerId
+                      )[0]!.title!
+                    }
+                    data={tasks}
+                    isSortingContainer={isSortingContainer}
+                  />
+                );
+              })}
           </SortableContext>
         </div>
         {createPortal(
@@ -338,14 +349,15 @@ const Kanban = ({ List: columns, Tasks: ts }: Props) => {
               duration: 75,
             }}
           >
-            {activeId ? (
+            {activeId && tasks ? (
               listOrder.includes(activeId) ? (
                 <List
                   id={activeId}
                   items={list[activeId]!}
                   name={
-                    columns.filter((c) => "column-" + c.id === activeId)[0]!
-                      .name
+                    currentBoard?.list.filter(
+                      (c) => "column-" + c.id === activeId
+                    )[0]!.title!
                   }
                   data={tasks}
                   dragOverlay
@@ -353,7 +365,9 @@ const Kanban = ({ List: columns, Tasks: ts }: Props) => {
               ) : (
                 <Task
                   id={activeId}
-                  item={tasks.filter((d) => "task-" + d.id === activeId)[0]}
+                  item={
+                    tasks?.task.filter((d) => "task-" + d.id === activeId)[0]
+                  }
                   dragOverlay
                 />
               )

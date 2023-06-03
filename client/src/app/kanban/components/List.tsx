@@ -8,12 +8,13 @@ import React from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import Task from "./Task";
+import { IAllTasks } from "../../store/types/kanban.types";
 
 type Props = {
   id: UniqueIdentifier;
   items: string[];
   name: string;
-  data: any[];
+  data: IAllTasks;
   isSortingContainer?: boolean;
   dragOverlay?: boolean;
 };
@@ -100,7 +101,7 @@ const List = (props: Props) => {
                 <Task
                   id={item}
                   key={item}
-                  item={data.filter((d) => "task-" + d.id === item)[0]}
+                  item={data.task.filter((d) => "task-" + d.id === item)[0]}
                   disabled={isSortingContainer}
                 />
               );
