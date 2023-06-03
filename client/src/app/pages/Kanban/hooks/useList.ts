@@ -11,7 +11,6 @@ export const useGetBoardList = (boardId: string) => {
 
   const { data: Tasks, isLoading: TaskLoading } = useQuery(
     allTaskKey,
-
     () =>
       queryApi.taskService
         .getAllTaskFromList(data!.board.kanbanListOrder)

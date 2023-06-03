@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { tasks, columns } from "./mock";
 import {
   closestCenter,
   pointerWithin,
@@ -29,47 +28,70 @@ import { createPortal } from "react-dom";
 import update from "immutability-helper";
 import List from "./components/List";
 import Task from "./components/Task";
+import { useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import { useGetBoardList } from "../pages/Kanban/hooks/useList";
+import { useSocketStore } from "../store/useSocket.store";
+import useSocket from "../store/websockets/websockets";
+import { IAllTasks } from "../store/types/kanban.types";
 
-type Props = {
-  Tasks: typeof tasks;
-  List: typeof columns;
-};
+const Kanban = () => {
+  const { boardId } = useParams<{ boardId: string }>();
+  useSocket(boardId as string);
+  const { currentBoard, allTask, isLoading } = useGetBoardList(
+    boardId as string
+  );
+  const { socket } = useSocketStore();
 
-const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
-  const [data, setData] = useState<typeof tasks>(tasks);
-  const [items, setItems] = useState<Record<UniqueIdentifier, string[]>>({});
-  const [containers, setContainers] = useState<UniqueIdentifier[]>([]);
+  const cache = useQueryClient();
+
+  const [tasks, setTasks] = useState<IAllTasks>();
+  const [list, setList] = useState<Record<UniqueIdentifier, string[]>>({});
+  const [listOrder, setListOrder] = useState<UniqueIdentifier[]>([]);
+
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const lastOverId = useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewContainer = useRef(false);
-  const isSortingContainer = activeId ? containers.includes(activeId) : false;
+  const isSortingContainer = activeId ? listOrder.includes(activeId) : false;
+  console.log("==currentBoard", { currentBoard, allTask, listOrder });
 
   useEffect(() => {
-    if (tasks) {
-      setData(tasks);
+    if (allTask) {
+      setTasks(allTask);
       let cols = {} as Record<string, string[]>;
-      columns.sort((a, b) => a.order - b.order);
-      columns.forEach((c) => {
-        cols["column-" + c.id] = [];
+      let cols1 = {} as Record<string, string[]>;
+      currentBoard?.board.kanbanListOrder.forEach((x) => {
+        cols1["column-" + x] = [];
       });
-      tasks.forEach((d) => {
-        if (!("column-" + d.col_id in cols)) {
-          cols["column-" + d.col_id] = [];
+
+      allTask?.task.forEach((x) => {
+        if (!("column-" + x.list in cols1)) {
+          cols1["column-" + x.list] = [];
         }
-        cols["column-" + d.col_id]?.push("task-" + d.id);
+        cols1["column-" + x.list]?.push("task-" + x.id);
       });
-      setItems(cols);
-      setContainers(Object.keys(cols));
+
+      // columns.sort((a, b) => a.order - b.order);
+      // columns.forEach((c) => {
+      //   cols["column-" + c.id] = [];
+      // });
+      // tasks.forEach((d) => {
+      //   if (!("column-" + d.col_id in cols)) {
+      //     cols["column-" + d.col_id] = [];
+      //   }
+      //   cols["column-" + d.col_id]?.push("task-" + d.id);
+      // });
+      setList(cols1);
+      setListOrder(Object.keys(cols1));
       console.log("====", {
         tasks,
-        acC: columns,
-        data: tasks,
-        columns,
         cols,
-        containers: Object.keys(cols),
+        cols1,
+        listOrder: Object.keys(cols),
+        listOrder1: Object.keys(cols1),
       });
     }
-  }, [tasks, columns]);
+  }, [allTask, currentBoard]);
 
   const moveBetweenContainers = useCallback(
     (
@@ -79,14 +101,14 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
       over: Over,
       overId: UniqueIdentifier
     ) => {
-      const activeItems = items[activeContainer];
-      const overItems = items[overContainer];
+      const activeItems = list[activeContainer];
+      const overItems = list[overContainer];
       const overIndex = overItems?.indexOf(overId as string);
       const activeIndex = activeItems?.indexOf(active.id as string);
 
       let newIndex;
 
-      if (overId in items) {
+      if (overId in list) {
         newIndex = overItems!.length + 1;
       } else {
         const isBelowOverItem =
@@ -104,8 +126,8 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
       }
       recentlyMovedToNewContainer.current = true;
 
-      setItems(
-        update(items, {
+      setList(
+        update(list, {
           [activeContainer]: {
             $splice: [[activeIndex, 1]],
           },
@@ -115,7 +137,7 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
         } as any)
       );
     },
-    [items]
+    [list]
   );
 
   /**
@@ -128,11 +150,11 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
    */
   const collisionDetectionStrategy = useCallback<CollisionDetection>(
     (args) => {
-      if (activeId && activeId in items) {
+      if (activeId && activeId in list) {
         return closestCenter({
           ...args,
           droppableContainers: args.droppableContainers.filter(
-            (container) => container.id in items
+            (container) => container.id in list
           ),
         });
       }
@@ -147,8 +169,8 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
       let overId = getFirstCollision(intersections, "id");
 
       if (overId !== null) {
-        if (overId in items) {
-          const containerItems = items[overId];
+        if (overId in list) {
+          const containerItems = list[overId];
 
           // If a container is matched and it contains items (columns 'A', 'B', 'C')
           if (containerItems && containerItems.length > 0) {
@@ -181,37 +203,29 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
       // If no droppable is matched, return the last match
       return lastOverId.current ? [{ id: lastOverId.current }] : [];
     },
-    [activeId, items]
+    [activeId, list]
   );
 
   const [clonedItems, setClonedItems] = useState<Record<
     UniqueIdentifier,
     string[]
   > | null>(null);
-  const sensors = useSensors(
-    useSensor(MouseSensor, {
-      // activationConstraint: {
-      //   //distance: 5,
-      //   delay: 0,
-      //   tolerance: 1,
-      // },
-    })
-  );
+  const sensors = useSensors(useSensor(MouseSensor));
 
   const findContainer = (id: UniqueIdentifier) => {
-    if (id in items) return id;
-    return containers.find((key) => items[key]?.includes(id as string));
+    if (id in list) return id;
+    return listOrder.find((key) => list[key]?.includes(id as string));
   };
 
   function handleDragStart({ active }: DragStartEvent) {
     setActiveId(active.id);
-    setClonedItems(items);
+    setClonedItems(list);
   }
 
   function handleDragOver({ active, over }: DragOverEvent) {
     const overId = over?.id;
 
-    if (!overId || active.id in items) return;
+    if (!overId || active.id in list) return;
 
     const overContainer = findContainer(overId);
     const activeContainer = findContainer(active.id);
@@ -235,8 +249,8 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
       return;
     }
 
-    if (active.id in items && over?.id) {
-      setContainers((containers) => {
+    if (active.id in list && over?.id) {
+      setListOrder((containers) => {
         const activeIndex = containers.indexOf(active.id);
         const overIndex = containers.indexOf(over.id);
 
@@ -254,11 +268,11 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
     const overContainer = findContainer(over.id);
 
     if (overContainer) {
-      const activeIndex = items[activeContainer]?.indexOf(active.id as string);
-      const overIndex = items[overContainer]?.indexOf(over.id as string);
+      const activeIndex = list[activeContainer]?.indexOf(active.id as string);
+      const overIndex = list[overContainer]?.indexOf(over.id as string);
 
       if (activeIndex !== overIndex) {
-        setItems((items) => ({
+        setList((items) => ({
           ...items,
           [overContainer]: arrayMove(
             items[overContainer]!,
@@ -276,7 +290,7 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
     if (clonedItems) {
       // Reset items to their original state in case items have been
       // Dragged across containers
-      setItems(clonedItems);
+      setList(clonedItems);
     }
 
     setActiveId(null);
@@ -287,7 +301,7 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
     requestAnimationFrame(() => {
       recentlyMovedToNewContainer.current = false;
     });
-  }, [items]);
+  }, [list]);
 
   return (
     <div>
@@ -306,24 +320,26 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
       >
         <div tw="flex flex-row p-10">
           <SortableContext
-            items={containers}
+            items={listOrder}
             strategy={horizontalListSortingStrategy}
           >
-            {containers.map((containerId) => {
-              return (
-                <List
-                  id={containerId}
-                  key={containerId}
-                  items={items[containerId]!}
-                  name={
-                    columns.filter((c) => "column-" + c.id === containerId)[0]!
-                      .name
-                  }
-                  data={data}
-                  isSortingContainer={isSortingContainer}
-                />
-              );
-            })}
+            {tasks &&
+              listOrder.map((containerId) => {
+                return (
+                  <List
+                    id={containerId}
+                    key={containerId}
+                    items={list[containerId]!}
+                    name={
+                      currentBoard?.list.filter(
+                        (c) => "column-" + c.id === containerId
+                      )[0]!.title!
+                    }
+                    data={tasks}
+                    isSortingContainer={isSortingContainer}
+                  />
+                );
+              })}
           </SortableContext>
         </div>
         {createPortal(
@@ -333,22 +349,25 @@ const Kanban = ({ List: columns, Tasks: tasks }: Props) => {
               duration: 75,
             }}
           >
-            {activeId ? (
-              containers.includes(activeId) ? (
+            {activeId && tasks ? (
+              listOrder.includes(activeId) ? (
                 <List
                   id={activeId}
-                  items={items[activeId]!}
+                  items={list[activeId]!}
                   name={
-                    columns.filter((c) => "column-" + c.id === activeId)[0]!
-                      .name
+                    currentBoard?.list.filter(
+                      (c) => "column-" + c.id === activeId
+                    )[0]!.title!
                   }
-                  data={data}
+                  data={tasks}
                   dragOverlay
                 />
               ) : (
                 <Task
                   id={activeId}
-                  item={data.filter((d) => "task-" + d.id === activeId)[0]}
+                  item={
+                    tasks?.task.filter((d) => "task-" + d.id === activeId)[0]
+                  }
                   dragOverlay
                 />
               )

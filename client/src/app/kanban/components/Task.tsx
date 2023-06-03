@@ -10,6 +10,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { Card, Row, Col, Space } from "antd";
 import { CSS } from "@dnd-kit/utilities";
 import { UniqueIdentifier } from "@dnd-kit/core";
+import { IAllTasks } from "../../store/types/kanban.types";
 
 const getPriorityIconByID = (id: number) => {
   let icon;
@@ -35,7 +36,7 @@ const getPriorityIconByID = (id: number) => {
 
 type Props = {
   id: UniqueIdentifier;
-  item: any;
+  item: IAllTasks["task"][0];
   dragOverlay?: boolean;
   disabled?: boolean;
 };
@@ -92,11 +93,11 @@ const Task = (props: Props) => {
         size="small"
       >
         <Row justify="space-between">
-          <Col span={20}>{item.name}</Col>
+          <Col span={20}>{item.title}</Col>
         </Row>
         <Row justify="space-between">
           <Col>
-            {item.comments_count && (
+            {/* {item.comments_count && (
               <Space
                 align="center"
                 style={{
@@ -106,12 +107,12 @@ const Task = (props: Props) => {
                 <MessageOutlined />
                 {item.comments_count}
               </Space>
-            )}
+            )} */}
           </Col>
           <Col>
-            <Space align="center">
+            {/* <Space align="center">
               {getPriorityIconByID(item.priority_id)}
-            </Space>
+            </Space> */}
           </Col>
         </Row>
       </Card>
