@@ -34,6 +34,7 @@ import { useGetBoardList } from "../pages/Kanban/hooks/useList";
 import { useSocketStore } from "../store/useSocket.store";
 import useSocket from "../store/websockets/websockets";
 import { IAllTasks } from "../store/types/kanban.types";
+import KanbanCreateList from "../pages/Kanban/components/KanbanCreateBtn";
 
 const Kanban = () => {
   const { boardId } = useParams<{ boardId: string }>();
@@ -71,25 +72,8 @@ const Kanban = () => {
         cols1["column-" + x.list]?.push("task-" + x.id);
       });
 
-      // columns.sort((a, b) => a.order - b.order);
-      // columns.forEach((c) => {
-      //   cols["column-" + c.id] = [];
-      // });
-      // tasks.forEach((d) => {
-      //   if (!("column-" + d.col_id in cols)) {
-      //     cols["column-" + d.col_id] = [];
-      //   }
-      //   cols["column-" + d.col_id]?.push("task-" + d.id);
-      // });
       setList(cols1);
       setListOrder(Object.keys(cols1));
-      console.log("====", {
-        tasks,
-        cols,
-        cols1,
-        listOrder: Object.keys(cols),
-        listOrder1: Object.keys(cols1),
-      });
     }
   }, [allTask, currentBoard]);
 
@@ -340,6 +324,7 @@ const Kanban = () => {
                   />
                 );
               })}
+            <KanbanCreateList dataId={boardId as string} action="list" />
           </SortableContext>
         </div>
         {createPortal(

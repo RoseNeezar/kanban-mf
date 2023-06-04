@@ -9,6 +9,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import Task from "./Task";
 import { IAllTasks } from "../../store/types/kanban.types";
+import KanbanCreateList from "../../pages/Kanban/components/KanbanCreateBtn";
 
 type Props = {
   id: UniqueIdentifier;
@@ -39,76 +40,82 @@ const List = (props: Props) => {
   });
 
   return (
-    <div
-      ref={setNodeRef}
-      style={{
-        transform: CSS.Translate.toString(transform),
-        cursor: dragOverlay ? "grabbing" : "grab",
-        transition,
-        display: "flex",
-        flexDirection: "column",
-      }}
-      {...attributes}
-      {...listeners}
-      tw="mx-3 min-h-[750px] w-56 bg-red-100"
-    >
+    <div tw="flex flex-col">
       <div
+        ref={setNodeRef}
         style={{
-          boxShadow: dragOverlay
-            ? "0 0 0 calc(1px / 1) rgba(63, 63, 68, 0.05), -1px 0 15px 0 rgba(34, 33, 81, 0.01), 0px 15px 15px 0 rgba(34, 33, 81, 0.25)"
-            : "",
-          mixBlendMode: dragOverlay ? "revert" : "normal",
-          border: dragOverlay
-            ? "1px solid rgba(64, 150, 255, 1)"
-            : "1px solid #dcdcdc", // 1px solid rgba(64, 150, 255, 1)
-          opacity: isDragging ? 0.5 : 1,
+          transform: CSS.Translate.toString(transform),
           cursor: dragOverlay ? "grabbing" : "grab",
-          transform: dragOverlay
-            ? "rotate(0deg) scale(1.05)"
-            : "rotate(0deg) scale(1.0)",
+          transition,
+          display: "flex",
+          flexDirection: "column",
         }}
+        {...attributes}
+        {...listeners}
+        tw="mx-3 w-56 bg-red-100"
       >
         <div
           style={{
-            cursor: "grab",
-            padding: "0 8px",
-            margin: "0",
-            borderBottom: "1px solid #dcdcdc",
-            zIndex: 10,
-            backgroundColor: "white",
-            textShadow: "1px 1px #fff",
+            boxShadow: dragOverlay
+              ? "0 0 0 calc(1px / 1) rgba(63, 63, 68, 0.05), -1px 0 15px 0 rgba(34, 33, 81, 0.01), 0px 15px 15px 0 rgba(34, 33, 81, 0.25)"
+              : "",
+            mixBlendMode: dragOverlay ? "revert" : "normal",
+            border: dragOverlay
+              ? "1px solid rgba(64, 150, 255, 1)"
+              : "1px solid #dcdcdc", // 1px solid rgba(64, 150, 255, 1)
+            opacity: isDragging ? 0.5 : 1,
+            cursor: dragOverlay ? "grabbing" : "grab",
+            transform: dragOverlay
+              ? "rotate(0deg) scale(1.05)"
+              : "rotate(0deg) scale(1.0)",
           }}
         >
-          <span style={{ marginLeft: "5px" }}>
-            <span>
-              {name}
-              <Badge
-                count={items.length ? items.length : 0}
-                showZero={true}
-                style={{
-                  backgroundColor: "#eee",
-                  color: "#777",
-                  marginLeft: "6px",
-                }}
-              />
-            </span>
-          </span>
-        </div>
-        <div>
-          <SortableContext items={items} strategy={verticalListSortingStrategy}>
-            {items.map((item, _index) => {
-              return (
-                <Task
-                  id={item}
-                  key={item}
-                  item={data.task.filter((d) => "task-" + d.id === item)[0]}
-                  disabled={isSortingContainer}
+          <div
+            style={{
+              cursor: "grab",
+              padding: "0 8px",
+              margin: "0",
+              borderBottom: "1px solid #dcdcdc",
+              zIndex: 10,
+              backgroundColor: "white",
+              textShadow: "1px 1px #fff",
+            }}
+          >
+            <span style={{ marginLeft: "5px" }}>
+              <span>
+                {name}
+                <Badge
+                  count={items.length ? items.length : 0}
+                  showZero={true}
+                  style={{
+                    backgroundColor: "#eee",
+                    color: "#777",
+                    marginLeft: "6px",
+                  }}
                 />
-              );
-            })}
-          </SortableContext>
+              </span>
+            </span>
+          </div>
+          <div>
+            <SortableContext
+              items={items}
+              strategy={verticalListSortingStrategy}
+            >
+              {items.map((item, _index) => {
+                return (
+                  <Task
+                    id={item}
+                    key={item}
+                    item={data.task.filter((d) => "task-" + d.id === item)[0]}
+                    disabled={isSortingContainer}
+                  />
+                );
+              })}
+            </SortableContext>
+          </div>
         </div>
       </div>
+      <KanbanCreateList dataId={id as string} action="task" />
     </div>
   );
 };
