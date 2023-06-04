@@ -14,27 +14,30 @@ const KanbanCreateList: React.FC<IKanbanCreateList> = ({ dataId, action }) => {
   const { createTask } = useCreateTask();
 
   const handleCreateItem = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && title.length > 0) {
-      if (action === "list") {
-        await createList({
-          title,
-          boardId: dataId,
-        });
-      } else if (action === "task") {
-        await createTask({
-          title,
-          listId: dataId,
-        });
-      }
+    try {
+      if (e.key === "Enter" && title.length > 0) {
+        if (action === "list") {
+          await createList({
+            title,
+            boardId: dataId,
+          });
+        } else if (action === "task") {
+          console.log("=", dataId.split("-")[0]);
+          await createTask({
+            title,
+            listId: dataId.split("-")[1],
+          });
+        }
 
-      setTitle("");
-      setOpenForm(false);
-    }
+        setTitle("");
+        setOpenForm(false);
+      }
+    } catch (error) {}
   };
   return (
     <>
       {openForm ? (
-        <div tw="max-h-full p-3 rounded-md h-28 bg-dark-third">
+        <div tw="max-h-full p-3 rounded-md h-28 bg-dark-third z-10">
           <input
             placeholder={
               action === "list"
